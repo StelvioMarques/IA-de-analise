@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload de Vídeo</title>
+    <script src="script.js"></script> <!-- Atualize o caminho, se necessário -->
+</head>
+<body>
+    <h1>Upload de Vídeo para Processamento</h1>
+    <form action="http://127.0.0.1:5000/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="video" accept="video/*" required>
+        <button type="submit">Enviar Vídeo</button>
+    </form>
+</body>
+</html>
