@@ -1,47 +1,59 @@
 from flask import Flask, request, jsonify
-import cv2
 import os
+import cv2
 
 app = Flask(__name__)
 
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 @app.route('/upload', methods=['POST'])
-def upload_video():
-    if 'video' not in request.files:
-        return jsonify({"error": "No file part"}), 400
+def upload_file():
+    # Verifica se a requisição tem o arquivo
+    if 'file' not in request.files:
+        return "No file part", 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return "No selected file", 400
 
-    video_file = request.files['video']
-    if video_file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
+    # Salva o vídeo na pasta uploads
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(file_path)
 
-    # Salvar o vídeo
-    video_path = os.path.join('uploads', video_file.filename)
-    video_file.save(video_path)
+    # Processar o vídeo
+    results = process_video(file_path)
 
-    # Processar o vídeo com OpenCV
-    process_video(video_path)
-
-    return jsonify({"message": "Video processed successfully!"})
+    return jsonify(results)  # Retorna os resultados como JSON para o frontend
 
 def process_video(video_path):
-    # Lógica para processar o vídeo usando OpenCV
+    # Carregar o vídeo
     cap = cv2.VideoCapture(video_path)
+    
+    frame_count = 0
+    total_objects_detected = 0
+    
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             break
         
-        # Exemplo de processamento: converter para escala de cinza
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # Contar o número de frames
+        frame_count += 1
         
-        # Aqui, poderíamos aplicar algoritmos para análise de condução
-        # Exibir o frame processado (opcional)
-        cv2.imshow('Video', gray_frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
+        # Simular detecção de objetos
+        if frame_count % 30 == 0:  # Exemplo: detecta a cada 30 frames
+            total_objects_detected += 1
+        
     cap.release()
-    cv2.destroyAllWindows()
+    
+    # Armazenar e retornar resultados
+    results = {
+        'frame_count': frame_count,
+        'total_objects_detected': total_objects_detected,
+    }
+
+    return results  # Retorna os resultados como dicionário
 
 if __name__ == '__main__':
-    os.makedirs('uploads', exist_ok=True)
     app.run(debug=True)
