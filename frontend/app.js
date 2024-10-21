@@ -49,11 +49,3 @@ function saveRecording() {
     window.URL.revokeObjectURL(url);
 }
 
-// Após o upload, você pode usar JavaScript para atualizar a seção de resultados
-fetch('/upload', { method: 'POST', body: formData })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('results').innerHTML =
-            `Total de frames: ${data.frame_count}, Objetos detectados: ${data.total_objects_detected}`;
-    })
-    .catch(error => console.error('Erro:', error));

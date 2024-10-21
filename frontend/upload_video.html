@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Upload de Vídeos</title>
 </head>
+
 <body>
     <h1>Upload de Vídeo para Processamento</h1>
     <form action="http://127.0.0.1:5000/upload" method="post" enctype="multipart/form-data">
@@ -14,6 +16,16 @@
     <a href="../index.html">voltar para gravar video</a>
 
     <div id="results"></div>
-    <script src="app.js"></script>
+    <script>
+        // Após o upload, você pode usar JavaScript para atualizar a seção de resultados
+        fetch('/upload', { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('results').innerHTML =
+                    `Total de frames: ${data.frame_count}, Objetos detectados: ${data.total_objects_detected}`;
+            })
+            .catch(error => console.error('Erro:', error));
+    </script>
 </body>
+
 </html>
